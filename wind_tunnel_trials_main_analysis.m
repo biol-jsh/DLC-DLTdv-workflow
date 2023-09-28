@@ -10,6 +10,8 @@
 
 
 %%
+addpath("MatlabScripts\")
+
 % Check if DLTdv available
 if exist("dltdv-master") == 7
     addpath(genpath("dltdv-master"))
@@ -32,18 +34,17 @@ if ~any(any(contains(struct2cell(ver), 'Curve Fitting Toolbox')))
     msgbox({'You need to install the Curve Fitting Toolbox.'}, "Missing toolbox", "Error")
     return
 end
-% Check MATLAB dependencies (toolboxes)
+
 if ~any(any(contains(struct2cell(ver), 'Signal Processing Toolbox')))
     msgbox({'You need to install the Signal Processing Toolbox.'}, "Missing toolbox", "Error")
     return
 end
-% Check MATLAB dependencies (toolboxes)
+
 if ~any(any(contains(struct2cell(ver), 'Statistics and Machine Learning Toolbox')))
     msgbox({'You need to install the Statistics and Machine Learning Toolbox.'}, "Missing toolbox", "Error")
     return
 end
 
-% Check MATLAB dependencies (toolboxes)
 if ~any(any(contains(struct2cell(ver), 'Bioinformatics Toolbox')))
     msgbox({'You need to install the Bioinformatics Toolbox.'}, "Missing toolbox", "Error")
     return
@@ -152,12 +153,12 @@ for folderNumber = 1:numel(batFolders)
     current_bat = split(currentBatFolder, "\");
     current_bat = current_bat(end-1); % get name of bat based on folder name
 
-    [x_axis ~] = getXYZfromDLTdv_4cams(x_axis_file(folderNumber), easyWandDataFile(folderNumber), camTforms{folderNumber}, crp, []);
+    [x_axis, ~] = getXYZfromDLTdv_4cams(x_axis_file(folderNumber), easyWandDataFile(folderNumber), camTforms{folderNumber}, crp, []);
     x_axis = squeeze(x_axis(find(abs(sum(x_axis(:,1,1),2,'omitnan'))>0),:,:));
 
     % not actually getting velocity, just direction of points along
     % calibration object
-    [x_axis,~] = getVelocityAndAcceleration(x_axis, 1, false); % false to not plot
+    [x_axis, ~] = getVelocityAndAcceleration(x_axis, 1, false); % false to not plot
     x_axis = squeeze(x_axis(find(abs(sum(x_axis(:,1,1),2,'omitnan'))>0),:,:));
     x_axis(2) = -x_axis(2); % flip y axis due to bug in easyWand
 
@@ -393,7 +394,7 @@ for folderNumber = 1:numel(batFolders)
     current_bat = split(currentBatFolder, "\");
     current_bat = current_bat(end-1); % get name of bat based on folder name
 
-    [x_axis ~] = getXYZfromDLTdv_4cams(x_axis_file(folderNumber), easyWandDataFile(folderNumber), camTforms{folderNumber}, crp, []);
+    [x_axis, ~] = getXYZfromDLTdv_4cams(x_axis_file(folderNumber), easyWandDataFile(folderNumber), camTforms{folderNumber}, crp, []);
     x_axis = squeeze(x_axis(find(abs(sum(x_axis(:,1,1),2, 'omitnan'))>0),:,:));
 
     % not actually getting velocity, just direction of points along
@@ -524,33 +525,31 @@ else
     disp("Web address to Shade on MathWorks File Exchange: https://www.mathworks.com/matlabcentral/fileexchange/69652-filled-area-plot")
     return
 end
-correlationCoeff = nan(6,9);
-correlationP = nan(6,9);
 
 for p = 1:6
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.auto_3mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.auto_3mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.auto_3mps = []']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.auto_3mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.auto_3mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.auto_3mps = [];']));
 
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.auto_4p5mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.auto_4p5mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.auto_4p5mps = []']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.auto_4p5mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.auto_4p5mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.auto_4p5mps = [];']));
 
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.auto_6mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.auto_6mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.auto_6mps = []']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.auto_6mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.auto_6mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.auto_6mps = [];']));
 
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.manual_3mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.manual_3mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.manual_3mps = []']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.manual_3mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.manual_3mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.manual_3mps = [];']));
 
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.manual_4p5mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.manual_4p5mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.manual_4p5mps = []']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.manual_4p5mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.manual_4p5mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.manual_4p5mps = [];']));
 
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.manual_6mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.manual_6mps = []']));
-    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.manual_6mps = []']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeX.manual_6mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeY.manual_6mps = [];']));
+    eval(string(['point_', char(num2str(p)), '_flap_amplitudeZ.manual_6mps = [];']));
 
     wbinterplength = 100;
 
@@ -571,9 +570,9 @@ for p = 1:6
             current_amplitudeY = -current_amplitudeY;
         end
 
-        eval(['point_', char(num2str(p)), '_flap_amplitudeX.','(speed_and_treatment)(end+1,1:wbinterplength) = interp1(linspace(1,wbinterplength,numel(current_amplitudeX)),current_amplitudeX,1:wbinterplength, ''spline'')']);
-        eval(['point_', char(num2str(p)), '_flap_amplitudeY.','(speed_and_treatment)(end+1,1:wbinterplength) = interp1(linspace(1,wbinterplength,numel(current_amplitudeY)),current_amplitudeY,1:wbinterplength, ''spline'')']);
-        eval(['point_', char(num2str(p)), '_flap_amplitudeZ.','(speed_and_treatment)(end+1,1:wbinterplength) = interp1(linspace(1,wbinterplength,numel(current_amplitudeZ)),current_amplitudeZ,1:wbinterplength, ''spline'')']);
+        eval(['point_', char(num2str(p)), '_flap_amplitudeX.','(speed_and_treatment)(end+1,1:wbinterplength) = interp1(linspace(1,wbinterplength,numel(current_amplitudeX)),current_amplitudeX,1:wbinterplength, ''spline'');']);
+        eval(['point_', char(num2str(p)), '_flap_amplitudeY.','(speed_and_treatment)(end+1,1:wbinterplength) = interp1(linspace(1,wbinterplength,numel(current_amplitudeY)),current_amplitudeY,1:wbinterplength, ''spline'');']);
+        eval(['point_', char(num2str(p)), '_flap_amplitudeZ.','(speed_and_treatment)(end+1,1:wbinterplength) = interp1(linspace(1,wbinterplength,numel(current_amplitudeZ)),current_amplitudeZ,1:wbinterplength, ''spline'');']);
     end
 end
 %%
@@ -651,7 +650,7 @@ for p =1:6
     % Create the UI panel
     panel = uipanel('Position', position);
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.auto_3mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.auto_3mps,1);']);
     subplot(3,3,1, 'Parent',panel); hold on
     subtitle("3 m/s");
     ylabel("x");
@@ -665,16 +664,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.manual_3mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.manual_3mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_x_3mps] = paa(point_',char(num2str(p)),'_flap_amplitudeX.manual_3mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,1) = R(1,2);
-    correlationP(p,1) = P(1,2);
-
-    trend_auto_x_3mps = trend_auto;
-    trend_manual_x_3mps = trend_manual;
-    trend_diff_x_3mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -684,8 +675,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_X_3mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_X_3mps_ratio = sum(overlap.point_' char(num2str(p)) '_X_3mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_X_3mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_X_3mps_ratio = sum(overlap.point_' char(num2str(p)) '_X_3mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
     ylim(xheight)
@@ -693,7 +684,7 @@ for p =1:6
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
     xticklabels([]);
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.auto_4p5mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.auto_4p5mps,1);']);
     subplot(3,3,2, 'Parent',panel); hold on
     subtitle("4.5 m/s")
     eval(['[trend_auto, x_std, bin_N, bins, norm_time, x_iqr_auto_x_4p5mps] = paa(point_',char(num2str(p)),'_flap_amplitudeX.auto_4p5mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
@@ -706,14 +697,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.manual_4p5mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.manual_4p5mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_x_4p5mps] = paa(point_',char(num2str(p)),'_flap_amplitudeX.manual_4p5mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,2) = R(1,2);
-    correlationP(p,2) = P(1,2);
-
-    trend_diff_x_4p5mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -723,8 +708,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_X_4p5mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_X_4p5mps_ratio = sum(overlap.point_' char(num2str(p)) '_X_4p5mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_X_4p5mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_X_4p5mps_ratio = sum(overlap.point_' char(num2str(p)) '_X_4p5mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
     xticklabels([])
@@ -734,7 +719,7 @@ for p =1:6
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
     yticklabels([])
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.auto_6mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.auto_6mps,1);']);
     subplot(3,3,3, 'Parent',panel); hold on
     subtitle("6 m/s")
     eval(['[trend_auto, x_std, bin_N, bins, norm_time, x_iqr_auto_x_6mps] = paa(point_',char(num2str(p)),'_flap_amplitudeX.auto_6mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
@@ -747,14 +732,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.manual_6mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeX.manual_6mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_x_6mps] = paa(point_',char(num2str(p)),'_flap_amplitudeX.manual_6mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,3) = R(1,2);
-    correlationP(p,3) = P(1,2);
-
-    trend_diff_x_6mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -764,8 +743,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_X_6mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_X_6mps_ratio = sum(overlap.point_' char(num2str(p)) '_X_6mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_X_6mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_X_6mps_ratio = sum(overlap.point_' char(num2str(p)) '_X_6mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
     xticklabels([])
@@ -775,7 +754,7 @@ for p =1:6
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
     yticklabels([])
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.auto_3mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.auto_3mps,1);']);
     subplot(3,3,4, 'Parent',panel); hold on
     ylabel("y")
     eval(['[trend_auto, x_std, bin_N, bins, norm_time, x_iqr_auto_y_3mps] = paa(point_',char(num2str(p)),'_flap_amplitudeY.auto_3mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
@@ -788,16 +767,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.manual_3mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.manual_3mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_y_3mps] = paa(point_',char(num2str(p)),'_flap_amplitudeY.manual_3mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,4) = R(1,2);
-    correlationP(p,4) = P(1,2);
-
-    trend_auto_y_3mps = trend_auto;
-    trend_manual_y_3mps = trend_manual;
-    trend_diff_y_3mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -808,8 +779,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_Y_3mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_Y_3mps_ratio = sum(overlap.point_' char(num2str(p)) '_Y_3mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_Y_3mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_Y_3mps_ratio = sum(overlap.point_' char(num2str(p)) '_Y_3mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
     xticklabels([])
@@ -817,7 +788,7 @@ for p =1:6
     y_limits = ylim(gca); %get the y limits
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.auto_4p5mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.auto_4p5mps,1);']);
     subplot(3,3,5, 'Parent',panel); hold on
     eval(['[trend_auto, x_std, bin_N, bins, norm_time, x_iqr_auto_y_4p5mps] = paa(point_',char(num2str(p)),'_flap_amplitudeY.auto_4p5mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
     color = DLC_color;
@@ -829,14 +800,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.manual_4p5mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.manual_4p5mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_y_4p5mps] = paa(point_',char(num2str(p)),'_flap_amplitudeY.manual_4p5mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,5) = R(1,2);
-    correlationP(p,5) = P(1,2);
-
-    trend_diff_y_4p5mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -846,8 +811,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_Y_4p5mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_Y_4p5mps_ratio = sum(overlap.point_' char(num2str(p)) '_Y_4p5mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_Y_4p5mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_Y_4p5mps_ratio = sum(overlap.point_' char(num2str(p)) '_Y_4p5mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
     xticklabels([])
@@ -857,7 +822,7 @@ for p =1:6
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
     yticklabels([])
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.auto_6mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.auto_6mps,1);']);
     subplot(3,3,6, 'Parent',panel); hold on
     eval(['[trend_auto, x_std, bin_N, bins, norm_time, x_iqr_auto_y_6mps] = paa(point_',char(num2str(p)),'_flap_amplitudeY.auto_6mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
     color = DLC_color;
@@ -869,14 +834,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.manual_6mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeY.manual_6mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_y_6mps] = paa(point_',char(num2str(p)),'_flap_amplitudeY.manual_6mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,6) = R(1,2);
-    correlationP(p,6) = P(1,2);
-
-    trend_diff_y_6mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -886,8 +845,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_Y_6mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_Y_6mps_ratio = sum(overlap.point_' char(num2str(p)) '_Y_6mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_Y_6mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_Y_6mps_ratio = sum(overlap.point_' char(num2str(p)) '_Y_6mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
     xticklabels([])
@@ -897,7 +856,7 @@ for p =1:6
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
     yticklabels([])
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.auto_3mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.auto_3mps,1);']);
     subplot(3,3,7, 'Parent',panel); hold on
 
     ylabel("z", 'Color','k')
@@ -911,16 +870,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.manual_3mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.manual_3mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_z_3mps] = paa(point_',char(num2str(p)),'_flap_amplitudeZ.manual_3mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,7) = R(1,2);
-    correlationP(p,7) = P(1,2);
-
-    trend_auto_z_3mps = trend_auto;
-    trend_manual_z_3mps = trend_manual;
-    trend_diff_z_3mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -930,15 +881,15 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_Z_3mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_Z_3mps_ratio = sum(overlap.point_' char(num2str(p)) '_Z_3mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_Z_3mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_Z_3mps_ratio = sum(overlap.point_' char(num2str(p)) '_Z_3mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
     ylim(zheight);
     y_limits = ylim(gca); %get the y limits
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.auto_4p5mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.auto_4p5mps,1);']);
     subplot(3,3,8, 'Parent',panel); hold on
     eval(['[trend_auto, x_std, bin_N, bins, norm_time, x_iqr_auto_z_4p5mps] = paa(point_',char(num2str(p)),'_flap_amplitudeZ.auto_4p5mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
     color = DLC_color;
@@ -950,14 +901,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.manual_4p5mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.manual_4p5mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_z_4p5mps] = paa(point_',char(num2str(p)),'_flap_amplitudeZ.manual_4p5mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,8) = R(1,2);
-    correlationP(p,8) = P(1,2);
-
-    trend_diff_z_4p5mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -967,8 +912,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_Z_4p5mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_Z_4p5mps_ratio = sum(overlap.point_' char(num2str(p)) '_Z_4p5mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_Z_4p5mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_Z_4p5mps_ratio = sum(overlap.point_' char(num2str(p)) '_Z_4p5mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
 
@@ -977,7 +922,7 @@ for p =1:6
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
     yticklabels([])
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.auto_6mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.auto_6mps,1);']);
     subplot(3,3,9, 'Parent',panel); hold on
     eval(['[trend_auto, x_std, bin_N, bins, norm_time, x_iqr_auto_z_6mps] = paa(point_',char(num2str(p)),'_flap_amplitudeZ.auto_6mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
     color = DLC_color;
@@ -989,14 +934,8 @@ for p =1:6
         delete(lines(i));
     end
 
-    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.manual_6mps,1)']);
+    eval(['number_of_wingbeats = size(','point_', char(num2str(p)),'_flap_amplitudeZ.manual_6mps,1);']);
     eval(['[trend_manual, x_std, bin_N, bins, norm_time, x_iqr_manual_z_6mps] = paa(point_',char(num2str(p)),'_flap_amplitudeZ.manual_6mps, repmat(1:wbinterplength,number_of_wingbeats,1), wbinterplength, 0);']);
-
-    [R,P] = corrcoef(trend_auto,trend_manual);
-    correlationCoeff(p,9) = R(1,2);
-    correlationP(p,9) = P(1,2);
-
-    trend_diff_z_6mps = abs(trend_manual-trend_auto);
 
     color = human_digitizer_color;
     uppy_manual = trend_manual+1.96*x_std/sqrt(number_of_wingbeats);
@@ -1006,8 +945,8 @@ for p =1:6
     for i = 1:numel(lines)
         delete(lines(i));
     end
-    eval(['overlap.point_' char(num2str(p)) '_Z_6mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto)']);
-    eval(['overlap.point_' char(num2str(p)) '_Z_6mps_ratio = sum(overlap.point_' char(num2str(p)) '_Z_6mps)']);
+    eval(['overlap.point_' char(num2str(p)) '_Z_6mps = (uppy_auto >= lowy_manual) & (uppy_manual >= lowy_auto);']);
+    eval(['overlap.point_' char(num2str(p)) '_Z_6mps_ratio = sum(overlap.point_' char(num2str(p)) '_Z_6mps);']);
     plot(0:99, trend_auto, 'color', DLC_color, 'LineWidth',lw)
     plot(0:99, trend_manual, 'color', human_digitizer_color, 'lineWidth', lw)
 
@@ -1016,29 +955,29 @@ for p =1:6
     yticks(linspace(y_limits(1),y_limits(2),n_ticks)); %set the yticks
     yticklabels([])
 
-    eval(['iqr_auto_x_3mps_point' char(num2str(p)) ' =  x_iqr_auto_x_3mps']);
-    eval(['iqr_auto_y_3mps_point' char(num2str(p)) ' =  x_iqr_auto_y_3mps']);
-    eval(['iqr_auto_z_3mps_point' char(num2str(p)) ' =  x_iqr_auto_z_3mps']);
+    eval(['iqr_auto_x_3mps_point' char(num2str(p)) ' =  x_iqr_auto_x_3mps;']);
+    eval(['iqr_auto_y_3mps_point' char(num2str(p)) ' =  x_iqr_auto_y_3mps;']);
+    eval(['iqr_auto_z_3mps_point' char(num2str(p)) ' =  x_iqr_auto_z_3mps;']);
 
-    eval(['iqr_auto_x_4p5mps_point' char(num2str(p)) ' =  x_iqr_auto_x_4p5mps']);
-    eval(['iqr_auto_y_4p5mps_point' char(num2str(p)) ' =  x_iqr_auto_y_4p5mps']);
-    eval(['iqr_auto_z_4p5mps_point' char(num2str(p)) ' =  x_iqr_auto_z_4p5mps']);
+    eval(['iqr_auto_x_4p5mps_point' char(num2str(p)) ' =  x_iqr_auto_x_4p5mps;']);
+    eval(['iqr_auto_y_4p5mps_point' char(num2str(p)) ' =  x_iqr_auto_y_4p5mps;']);
+    eval(['iqr_auto_z_4p5mps_point' char(num2str(p)) ' =  x_iqr_auto_z_4p5mps;']);
 
-    eval(['iqr_auto_x_6mps_point' char(num2str(p)) ' =  x_iqr_auto_x_6mps']);
-    eval(['iqr_auto_y_6mps_point' char(num2str(p)) ' =  x_iqr_auto_y_6mps']);
-    eval(['iqr_auto_z_6mps_point' char(num2str(p)) ' =  x_iqr_auto_z_6mps']);
+    eval(['iqr_auto_x_6mps_point' char(num2str(p)) ' =  x_iqr_auto_x_6mps;']);
+    eval(['iqr_auto_y_6mps_point' char(num2str(p)) ' =  x_iqr_auto_y_6mps;']);
+    eval(['iqr_auto_z_6mps_point' char(num2str(p)) ' =  x_iqr_auto_z_6mps;']);
 
-    eval(['iqr_manual_x_3mps_point' char(num2str(p)) ' =  x_iqr_manual_x_3mps']);
-    eval(['iqr_manual_y_3mps_point' char(num2str(p)) ' =  x_iqr_manual_y_3mps']);
-    eval(['iqr_manual_z_3mps_point' char(num2str(p)) ' =  x_iqr_manual_z_3mps']);
+    eval(['iqr_manual_x_3mps_point' char(num2str(p)) ' =  x_iqr_manual_x_3mps;']);
+    eval(['iqr_manual_y_3mps_point' char(num2str(p)) ' =  x_iqr_manual_y_3mps;']);
+    eval(['iqr_manual_z_3mps_point' char(num2str(p)) ' =  x_iqr_manual_z_3mps;']);
 
-    eval(['iqr_manual_x_4p5mps_point' char(num2str(p)) ' =  x_iqr_manual_x_4p5mps']);
-    eval(['iqr_manual_y_4p5mps_point' char(num2str(p)) ' =  x_iqr_manual_y_4p5mps']);
-    eval(['iqr_manual_z_4p5mps_point' char(num2str(p)) ' =  x_iqr_manual_z_4p5mps']);
+    eval(['iqr_manual_x_4p5mps_point' char(num2str(p)) ' =  x_iqr_manual_x_4p5mps;']);
+    eval(['iqr_manual_y_4p5mps_point' char(num2str(p)) ' =  x_iqr_manual_y_4p5mps;']);
+    eval(['iqr_manual_z_4p5mps_point' char(num2str(p)) ' =  x_iqr_manual_z_4p5mps;']);
 
-    eval(['iqr_manual_x_6mps_point' char(num2str(p)) ' =  x_iqr_manual_x_6mps']);
-    eval(['iqr_manual_y_6mps_point' char(num2str(p)) ' =  x_iqr_manual_y_6mps']);
-    eval(['iqr_manual_z_6mps_point' char(num2str(p)) ' =  x_iqr_manual_z_6mps']);
+    eval(['iqr_manual_x_6mps_point' char(num2str(p)) ' =  x_iqr_manual_x_6mps;']);
+    eval(['iqr_manual_y_6mps_point' char(num2str(p)) ' =  x_iqr_manual_y_6mps;']);
+    eval(['iqr_manual_z_6mps_point' char(num2str(p)) ' =  x_iqr_manual_z_6mps;']);
 end
 
 %%
@@ -1524,15 +1463,6 @@ for i=1:6
     preTable(i,1) = strcat(num2str(parameter_average_auto, "%.2f"), " (", [num2str(parameter_95CI_auto(1), "%.2f"), ' to ', num2str(parameter_95CI_auto(2), "%.2f")], ")");
     preTable(i,2) = strcat(num2str(parameter_average_manual, "%.2f"), " (", [num2str(parameter_95CI_manual(1), "%.2f"), ' to ', num2str(parameter_95CI_manual(2), "%.2f")], ")");
 end
-
-% array2table(preTable,'VariableNames', ["Auto", "Manual"], "RowNames", ...
-%     ["stroke amplitude (mm)", ...
-%     "wingbeat frequency (Hz)", ...
-%     strcat("stroke plane angle, ds (", units(3), ")"), ...
-%     strcat("stroke plane angle, us (", units(4), ")"), ...
-%     strcat("angle of attack (", units(5), ")"), ...
-%     strcat("wing area mid ds (", units(6), ")")])
-
 
 kinParamTable=array2table([preTable,pValues_speed',pValues_treatment'],'VariableNames', ["Auto", "Manual","p-value speed", "p-value treatment"], "RowNames", ...
     ["stroke amplitude (mm)", ...
