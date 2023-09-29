@@ -9,6 +9,7 @@
 
 
 %%
+addpath("MatlabScripts\")
 
 % Check if DLTdv available
 if exist("dltdv-master") == 7
